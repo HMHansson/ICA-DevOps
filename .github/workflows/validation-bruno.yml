@@ -28,9 +28,6 @@ on:
       WMIO_USERNAME_DEV: 
         type: string
         required: true
-      WMIO__USERNAME: 
-        type: string
-        required: true
       BRUNO_ENVIRONMENT: 
         type: string
         required: false
