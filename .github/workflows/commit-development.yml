@@ -65,8 +65,7 @@ jobs:
           echo webMethods.io DEV URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
           echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME_DEV }}
           echo Triggered by : ${{ github.event_name }}
-          echo pwd
-          echo ls -ltr
+          ls -ltr  ${{ github.workspace }}/devops/scripts
       # --------------------------------------
       # Export All Project Assets
       # --------------------------------------
@@ -78,6 +77,14 @@ jobs:
           WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
 
+          # Handle incoming credentials from other workflows
+          if [ "${{ secrets.B2B_PASSWORD }}" != "" ]; then
+            B2B_PASSWORD=${{ secrets.B2B_PASSWORD }}
+          fi
+          if [ "${{ secrets.WMIO_PASSWORD }}" != "" ]; then
+            WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }}
+          fi
+          
           ${{ github.workspace }}/devops/scripts/exportProject.sh \
             ${WMIO_URL} \
             ${{ vars.WMIO_USERNAME_DEV }} \
