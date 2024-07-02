@@ -1,0 +1,100 @@
+# ------------------------------------------------------------------------------
+# Github Workflow to commit to development branch ...
+#
+#   - This pipeline is triggered manually by developers at various times
+#     
+#     1) Run predefined tests for this project in wM.io DEV environment
+#        - Calls workflow postman-validation to perform tests
+#   
+#     2) If validation successful:
+#        - Check out development branch 
+#        - Run an export of all dev assets for this project in wM.io
+#        - Perform a commit/push to git origin for this development branch
+# 
+# ------------------------------------------------------------------------------
+name: Commit Development
+on: 
+  workflow_call:
+    secrets:
+      B2B_PASSWORD:
+        required: true
+      WMIO_PASSWORD:
+        required: true
+    inputs:
+      WMIO_PROJECT_NAME: 
+        type: string
+        required: true
+      WMIO_HOSTNAME_DEV: 
+        type: string
+        required: true
+      WMIO_USERNAME_DEV: 
+        type: string
+        required: true
+      WMIO__USERNAME: 
+        type: string
+        required: true
+            
+jobs:
+  # -------------------------------
+  # Export and Commit if test success
+  # -------------------------------
+  Commit-Development-Assets:
+    runs-on: ubuntu-latest
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    steps:
+      # --------------------------------------
+      # Check out development
+      # --------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          ref: 'development'
+      # --------------------------------------
+      # Build Info
+      # --------------------------------------
+      - name: Build Info
+        run: |
+          echo Repository: ${{ github.repository }}
+          echo Project Name: ${WMIO_PROJECT_NAME}
+          echo Run ID: ${{ github.run_id }}
+          echo Run Number: ${{ github.run_number }} 
+          echo Triggered by: ${{ github.triggering_actor }} 
+          echo Github path: ${{ github.workspace }} 
+          echo webMethods.io DEV URL: https://${WMIO_HOSTNAME_DEV}:443
+          echo webMethods.io DEV Username: ${WMIO_USERNAME_DEV}
+          echo Triggered by : ${{ github.event_name }}
+      # --------------------------------------
+      # Export All Project Assets
+      # --------------------------------------
+      - name: Export Project Assets
+        env:
+          WMIO_PASSWORD: ${{ secrets.WMIO_PASSWORD_DEV }}      
+        run:  |
+          PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${WMIO_PROJECT_NAME}")
+          WMIO_URL=https://${WMIO_HOSTNAME_DEV}:443
+          chmod +x ./scripts/*.sh
+
+          ./scripts/exportProject.sh \
+            ${WMIO_URL} \
+            ${WMIO_USERNAME_DEV} \
+            "$WMIO_PASSWORD" \
+            ${PROJECT_NAME_URL_ENCODED} \
+            ${{ github.workspace }}
+      # --------------------------------------
+      # List Exported Assets
+      # --------------------------------------
+      - name: List Exported Assets
+        run:  |
+          PROJECT_ASSETS_DIR="${{ github.workspace }}/assets"
+          ls -ltr "${PROJECT_ASSETS_DIR}"
+      # -------------------------------
+      # Commmit all updated assets to Dev Branch
+      # -------------------------------
+      - name: Commmit & Push Dev Branch
+        run:  |
+          cd "${{ github.workspace }}"
+          git config user.email "noemail.com"
+          git config user.name "${{ github.triggering_actor }}"
+          git add .
+          git commit -m "${{ github.triggering_actor }} committing development: ${{ github.run_number }}"
+          git push origin HEAD:development
+          set +x

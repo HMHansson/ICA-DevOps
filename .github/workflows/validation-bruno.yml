@@ -1,0 +1,128 @@
+# ------------------------------------------------------------------------------
+# Github Workflow to validate functionality using Postman Collections
+#
+#  - This pipeline is triggered by
+#     a) Manually start this workflow (from Github actions)
+#     b) commit/push bron test cases to development branch (using git client)
+#     c) development commit/merge (called via workflow_call - commit-development)
+#     d) test PR/merge (called via workflow_call - promote-test)
+#     e) production PR/merge (called via workflow_call - promote-production)
+#
+# ------------------------------------------------------------------------------
+name: Dev Test Case Validation
+run-name: Project Test Cases
+on:
+  workflow_call:
+    secrets:
+      B2B_PASSWORD:
+        required: true
+      WMIO_PASSWORD:
+        required: true
+    inputs:
+      WMIO_PROJECT_NAME: 
+        type: string
+        required: true
+      WMIO_HOSTNAME_DEV: 
+        type: string
+        required: true
+      WMIO_USERNAME_DEV: 
+        type: string
+        required: true
+      WMIO__USERNAME: 
+        type: string
+        required: true
+      BRUNO_ENVIRONMENT: 
+        type: string
+        required: false
+
+env:
+  BRUNO_COLLECTION: "${{ github.workspace }}/test/TestCollection"
+  BRUNO_ENVIRONMENT: "development"  # Default environment
+
+jobs:
+  Run-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      # --------------------------------------
+      # Checkout branch
+      # --------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      # --------------------------------------
+      # Conditions
+      # --------------------------------------
+      - name: Test conditions
+        run: |
+          echo Triggered by event: ${{ github.event_name }}
+          if test -d "${{ env.BRUNO_COLLECTION }}"; then
+            echo Test collection found for ${WMIO_PROJECT_NAME} ...
+          else
+            echo No test cases found for ${WMIO_PROJECT_NAME} ...
+            gh run cancel ${{ github.run_id }}
+            gh run watch ${{ github.run_id }}
+          fi
+          
+          # Set environment for Bruno to use (default: development)
+          if [ "${{ github.ref }}" == "refs/heads/development" ]; then
+            echo Running Bruno Tests for the DEVELOPMENT environment.
+            echo "BRUNO_ENVIRONMENT=development" >> $GITHUB_ENV
+          elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+            echo "BRUNO_ENVIRONMENT=test" >> $GITHUB_ENV
+            echo Running Bruno Tests for the TEST environment.
+          elif [ "${{ github.ref }}" == "refs/heads/production" ]; then
+            echo "BRUNO_ENVIRONMENT=production" >> $GITHUB_ENV
+            echo Running Bruno Tests for the PRODUCTION environment.
+          fi
+
+      # ------------------------------------------------------
+      # Run Bruno Tests 
+      # ------------------------------------------------------
+      - name: Install Bruno CLI
+        run: |
+          cd ${{ env.BRUNO_COLLECTION }}
+          npm install @usebruno/cli -g
+          npm install xml2js
+      - name: Run Bruno Tests
+        run: |
+          # Handle incoming credentials from other workflows
+          if [ "${{ secrets.B2B_PASSWORD }}" != "" ]; then
+            B2B_PASSWORD=${{ secrets.B2B_PASSWORD }}
+          fi
+          if [ "${{ secrets.WMIO_PASSWORD }}" != "" ]; then
+            WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }}
+          fi
+
+          if [ "${{ env.BRUNO_ENVIRONMENT }}" == "development" ]; then
+            if [ -z ${B2B_PASSWORD+x} ]; then 
+              echo Using DEV credentials
+              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_DEV }}
+              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_DEV }}
+            fi
+          elif [ "${{ env.BRUNO_ENVIRONMENT }}" == "test" ]; then
+            echo Tests Triggered for Test...
+            if [ -z ${B2B_PASSWORD+x} ]; then 
+              echo Using TEST credentials
+              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_TEST }}
+              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_TEST }}
+            fi
+          elif [ "${{ env.BRUNO_ENVIRONMENT }}" == "production" ]; then
+            echo Tests Triggered for Production...
+            if [ -z ${B2B_PASSWORD+x} ]; then 
+              echo Using PROD credentials
+              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_PROD }}
+              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_PROD }}
+            fi
+          fi
+          
+          cd ${{ env.BRUNO_COLLECTION }}
+
+          # ----------------------------
+          #  Run collection
+          # ----------------------------
+          bru run --env ${{ env.BRUNO_ENVIRONMENT }} --env-var B2B_PASSWORD=${B2B_PASSWORD} --env-var WMIO_PASSWORD=${WMIO_PASSWORD} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
+      - name: Publish Test Reports
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: '${{ env.BRUNO_COLLECTION }}/bruno-junit.xml'
