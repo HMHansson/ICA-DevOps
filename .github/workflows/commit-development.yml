@@ -16,8 +16,6 @@ name: Commit Development
 on: 
   workflow_call:
     secrets:
-      B2B_PASSWORD:
-        required: true
       WMIO_PASSWORD:
         required: true
     inputs:
