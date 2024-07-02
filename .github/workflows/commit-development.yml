@@ -15,6 +15,9 @@
 name: Commit Development
 on: 
   workflow_call:
+    secrets:
+      WMIO_PASSWORD:
+        required: true
     inputs:
       WMIO_PROJECT_NAME: 
         type: string
