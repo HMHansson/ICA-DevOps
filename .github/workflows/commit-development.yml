@@ -37,7 +37,6 @@ jobs:
   # -------------------------------
   Commit-Development-Assets:
     runs-on: ubuntu-latest
-    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     steps:
       # --------------------------------------
       # Check out development
