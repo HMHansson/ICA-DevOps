@@ -50,7 +50,7 @@ jobs:
       - name: Build Info
         run: |
           echo Repository: ${{ github.repository }}
-          echo Project Name: ${WMIO_PROJECT_NAME}
+          echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
@@ -58,6 +58,8 @@ jobs:
           echo webMethods.io DEV URL: https://${WMIO_HOSTNAME_DEV}:443
           echo webMethods.io DEV Username: ${WMIO_USERNAME_DEV}
           echo Triggered by : ${{ github.event_name }}
+          echo pwd
+          echo ls -ltr
       # --------------------------------------
       # Export All Project Assets
       # --------------------------------------
