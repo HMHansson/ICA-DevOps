@@ -15,9 +15,6 @@
 name: Commit Development
 on: 
   workflow_call:
-    secrets:
-      WMIO_PASSWORD:
-        required: true
     inputs:
       WMIO_PROJECT_NAME: 
         type: string
@@ -70,11 +67,8 @@ jobs:
         run:  |
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
           WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
+
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
-
-          echo "URL: ${WMIO_URL}"
-          echo "Encoded Project Name: ${PROJECT_NAME_URL_ENCODED}"
-
           ${{ github.workspace }}/devops/scripts/exportProject.sh \
             ${WMIO_URL} \
             ${{ vars.WMIO_USERNAME_DEV }} \
