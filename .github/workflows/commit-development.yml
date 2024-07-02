@@ -72,10 +72,13 @@ jobs:
           WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
 
+          echo "URL: ${WMIO_URL}"
+          echo "Encoded Project Name: ${PROJECT_NAME_URL_ENCODED}"
+
           ${{ github.workspace }}/devops/scripts/exportProject.sh \
             ${WMIO_URL} \
             ${{ vars.WMIO_USERNAME_DEV }} \
-            "$WMIO_PASSWORD" \
+            "${{ secrets.WMIO_USERNAME_DEV }}" \
             ${PROJECT_NAME_URL_ENCODED} \
             ${{ github.workspace }}
       # --------------------------------------
