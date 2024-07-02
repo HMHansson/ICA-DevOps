@@ -39,11 +39,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # --------------------------------------
-      # Check out development
+      # Check out project development branch
       # --------------------------------------
       - uses: actions/checkout@v4
         with:
           ref: 'development'
+      # --------------------------------------
+      # Check out DevOps scripts 
+      # --------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          repository: 'HMHansson/ICA-DevOps'
+          path: "devops"
       # --------------------------------------
       # Build Info
       # --------------------------------------
@@ -55,8 +62,8 @@ jobs:
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
           echo Github path: ${{ github.workspace }} 
-          echo webMethods.io DEV URL: https://${WMIO_HOSTNAME_DEV}:443
-          echo webMethods.io DEV Username: ${WMIO_USERNAME_DEV}
+          echo webMethods.io DEV URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
+          echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME_DEV }}
           echo Triggered by : ${{ github.event_name }}
           echo pwd
           echo ls -ltr
@@ -68,12 +75,12 @@ jobs:
           WMIO_PASSWORD: ${{ secrets.WMIO_PASSWORD_DEV }}      
         run:  |
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${WMIO_PROJECT_NAME}")
-          WMIO_URL=https://${WMIO_HOSTNAME_DEV}:443
-          chmod +x ./scripts/*.sh
+          WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
+          chmod +x ${{ github.workspace }}/devops/scripts/*.sh
 
-          ./scripts/exportProject.sh \
+          ${{ github.workspace }}/devops/scripts/exportProject.sh \
             ${WMIO_URL} \
-            ${WMIO_USERNAME_DEV} \
+            ${{ vars.WMIO_USERNAME_DEV }} \
             "$WMIO_PASSWORD" \
             ${PROJECT_NAME_URL_ENCODED} \
             ${{ github.workspace }}

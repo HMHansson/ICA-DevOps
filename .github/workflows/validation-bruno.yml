@@ -47,6 +47,22 @@ jobs:
         with:
           ref: ${{ github.ref }}
       # --------------------------------------
+      # Run Info
+      # --------------------------------------
+      - name: Run Info
+        run: |
+          echo Repository: ${{ github.repository }}
+          echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
+          echo Run ID: ${{ github.run_id }}
+          echo Run Number: ${{ github.run_number }} 
+          echo Triggered by: ${{ github.triggering_actor }} 
+          echo Github path: ${{ github.workspace }} 
+          echo webMethods.io DEV URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
+          echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME_DEV }}
+          echo Triggered by : ${{ github.event_name }}
+          echo pwd
+          echo ls -ltr
+      # --------------------------------------
       # Conditions
       # --------------------------------------
       - name: Test conditions
