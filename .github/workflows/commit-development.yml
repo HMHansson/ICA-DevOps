@@ -50,8 +50,7 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
-          echo Environment1: ${{ vars.WMIO_ENVIRONMENT }}
-          echo Environment2: ${WMIO_ENVIRONMENT}
+          echo Environment: ${{ env.WMIO_ENVIRONMENT }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
