@@ -18,17 +18,7 @@ on:
     secrets:
       WMIO_PASSWORD:
         required: true
-    inputs:
-      WMIO_PROJECT_NAME: 
-        type: string
-        required: true
-      WMIO_HOSTNAME: 
-        type: string
-        required: true
-      WMIO_USERNAME: 
-        type: string
-        required: true
-            
+
 jobs:
   # -------------------------------
   # Export and Commit if test success
@@ -60,8 +50,8 @@ jobs:
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
           echo Github path: ${{ github.workspace }} 
-          echo webMethods.io DEV URL: https://${{ vars.WMIO_HOSTNAME }}:443
-          echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME }}
+          echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
+          echo webMethods.io Username: ${{ vars.WMIO_USERNAME_DEV }}
           echo Triggered by : ${{ github.event_name }}
       # --------------------------------------
       # Export All Assets
@@ -74,7 +64,7 @@ jobs:
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
           ${{ github.workspace }}/devops/scripts/exportAllAssets.sh \
             ${WMIO_URL} \
-            ${{ vars.WMIO_USERNAME }} \
+            ${{ vars.WMIO_USERNAME_DEV }} \
             "${{ secrets.WMIO_PASSWORD }}" \
             ${PROJECT_NAME_URL_ENCODED} \
             ${{ github.workspace }}
