@@ -11,20 +11,21 @@ name: Deploy
 run-name: Promote to Environment
 on:
   workflow_call:
+    inputs:
+      environment: 
+        type: string
+        required: true
     secrets:
       WMIO_PASSWORD:
-        required: true
-    inputs:
-      WMIO_ENVIRONMENT:
-          type: string
-          required: true
-  
+        required: true      
+          
 jobs:
   # -------------------------------
   # Import assets to wM.io
   # -------------------------------
   Promote-Assets:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       # --------------------------------------
       # Check out project assets test branch
@@ -46,27 +47,14 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
-          echo Environment: ${{ env.WMIO_ENVIRONMENT }}
+          echo Environment: ${{ inputs.environment }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
           echo Github path: ${{ github.workspace }} 
-          if [[ "${{ env.WMIO_ENVIRONMENT }}" == "development" ]]; then
-            echo "WMIO_HOSTNAME=${{ vars.WMIO_HOSTNAME_DEV }}" >> $GITHUB_ENV
-            echo "WMIO_USERNAME=${{ vars.WMIO_USERNAME_DEV }}" >> $GITHUB_ENV
-          elif [[ "${{ env.WMIO_ENVIRONMENT }}" == "test" ]]; then 
-            echo "WMIO_HOSTNAME=${{ vars.WMIO_HOSTNAME_TEST }}" >> $GITHUB_ENV
-            echo "WMIO_USERNAME=${{ vars.WMIO_USERNAME_TEST }}" >> $GITHUB_ENV
-          elif [[ "${{ env.WMIO_ENVIRONMENT }}" == "production" ]]; then 
-            echo "WMIO_HOSTNAME=${{ vars.WMIO_HOSTNAME_PROD }}" >> $GITHUB_ENV
-            echo "WMIO_USERNAME=${{ vars.WMIO_USERNAME_PROD }}" >> $GITHUB_ENV
-          else
-            echo invalid environment name ${{ env.WMIO_ENVIRONMENT }}
-            exit 1
-          fi
-          echo webMethods.io URL: https://${{ env.WMIO_HOSTNAME }}:443
-          echo webMethods.io Username: ${{ env.WMIO_USERNAME }}
-
+          echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME }}:443
+          echo webMethods.io Username: ${{ vars.WMIO_USERNAME }}
+          echo Triggered by : ${{ github.event_name }}
       # --------------------------------------
       # Import All Assets
       # --------------------------------------
@@ -74,14 +62,13 @@ jobs:
         run:  |
 
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
-          WMIO_URL=https://${{ env.WMIO_HOSTNAME }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
-          echo "Promoting to ${{ env.WMIO_ENVIRONMENT }} ......."
+          echo "Promoting to ${{ inputs.environment }} environment ......."
           
           # ${{ github.workspace }}/devops/scripts/importAllAssets.sh \
-          #  ${WMIO_URL} \
-          #  ${{ env.WMIO_USERNAME }} \
+          #  https://${{ vars.WMIO_HOSTNAME }}:443 \
+          #  ${{ vars.WMIO_USERNAME }} \
           #  "${{ secrets.WMIO_PASSWORD }}" \
           #  ${PROJECT_NAME_URL_ENCODED} \
           #  ${{ github.workspace }}

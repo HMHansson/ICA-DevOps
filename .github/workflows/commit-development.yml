@@ -15,13 +15,13 @@
 name: Commit Development
 on: 
   workflow_call:
-    secrets:
-      WMIO_PASSWORD:
-        required: true
     inputs:
-      WMIO_ENVIRONMENT: 
+      environment: 
         type: string
         required: true
+    secrets:
+      WMIO_PASSWORD:
+        required: true      
     
 jobs:
   # -------------------------------
@@ -29,6 +29,7 @@ jobs:
   # -------------------------------
   Commit-Development-Assets:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       # --------------------------------------
       # Check out project development branch
@@ -50,13 +51,13 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
-          echo Environment: ${{ env.WMIO_ENVIRONMENT }}
+          echo Environment: ${{ inputs.environment }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
           echo Github path: ${{ github.workspace }} 
-          echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
-          echo webMethods.io Username: ${{ vars.WMIO_USERNAME_DEV }}
+          echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME }}:443
+          echo webMethods.io Username: ${{ vars.WMIO_USERNAME }}
           echo Triggered by : ${{ github.event_name }}
       # --------------------------------------
       # Export All Assets
@@ -64,15 +65,15 @@ jobs:
       - name: Export All Assets
         run:  |
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
-          WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
           ${{ github.workspace }}/devops/scripts/exportAllAssets.sh \
-            ${WMIO_URL} \
-            ${{ vars.WMIO_USERNAME_DEV }} \
-            "${{ secrets.WMIO_PASSWORD }}" \
-            ${PROJECT_NAME_URL_ENCODED} \
-            ${{ github.workspace }}
+           https://${{ vars.WMIO_HOSTNAME }}:443 \
+           ${{ vars.WMIO_USERNAME }} \
+           "${{ secrets.WMIO_PASSWORD }}" \
+           ${PROJECT_NAME_URL_ENCODED} \
+           ${{ github.workspace }}
+           
       # --------------------------------------
       # List Exported Assets
       # --------------------------------------

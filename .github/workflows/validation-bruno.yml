@@ -16,7 +16,7 @@ on:
     inputs:
       environment: 
         type: string
-        required: false
+        required: true
     secrets:
       B2B_PASSWORD:
         required: true
