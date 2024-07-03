@@ -21,7 +21,7 @@ on:
     inputs:
       WMIO_ENVIRONMENT: 
         type: string
-        required: false
+        required: true
     
 jobs:
   # -------------------------------
