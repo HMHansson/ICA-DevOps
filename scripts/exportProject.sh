@@ -10,31 +10,6 @@ wmio_password=$3
 wmio_projectName=$4
 github_home=$5
 
-if [ -z "$wmio_endpoint" ]; then
-  echo "Missing template parameter wmio_endpoint"
-  exit 1
-fi
-
-if [ -z "$wmio_user" ]; then
-  echo "Missing template parameter wmio_user"
-  exit 1
-fi
-
-if [ -z "$wmio_password" ]; then
-  echo "Missing template parameter wmio_password"
-  exit 1
-fi
-
-if [ -z "$wmio_projectName" ]; then
-  echo "Missing template parameter wmio_projectName"
-  exit 1
-fi
-
-if [ -z "$github_home" ]; then
-  echo "Missing template parameter github_home"
-  exit 1
-fi
-
 # ----------------------------------------------------------
 # Main
 # ----------------------------------------------------------

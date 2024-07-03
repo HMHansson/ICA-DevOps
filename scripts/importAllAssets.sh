@@ -50,7 +50,9 @@ if [ -d "${ASSETS_DIR}" ]; then
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
-    ${wmio_projectName}
+    ${wmio_projectName} \
+    ${github_home}
+
 else 
   echo No Project archive exists for this project...
 fi
@@ -66,7 +68,8 @@ if [ -d "${ASSETS_DIR}" ]; then
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
-    ${wmio_projectName}
+    ${wmio_projectName} \
+    ${github_home}
 else 
   echo No Workflows exist for this project...
 fi
@@ -82,7 +85,8 @@ if [ -d "${ASSETS_DIR}" ]; then
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
-    ${wmio_projectName}
+    ${wmio_projectName} \
+    ${github_home}
 else 
   echo No Flow Services exist for this project...
 fi
@@ -98,7 +102,8 @@ if [ -d "${ASSETS_DIR}" ]; then
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
-    ${wmio_projectName}
+    ${wmio_projectName} \
+    ${github_home}
 else 
   echo No Reference data exist for this project...
 fi

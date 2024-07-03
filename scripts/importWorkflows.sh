@@ -8,6 +8,7 @@ wmio_endpoint=$1
 wmio_user=$2
 wmio_password=$3
 wmio_projectName=$4
+github_home=$5
 
 function importWorkflow() {
   wmio_endpoint=$1

@@ -30,6 +30,11 @@ if [ -z "$wmio_projectName" ]; then
   exit 1
 fi
 
+if [ -z "$github_home" ]; then
+  echo "Missing template parameter github_home"
+  exit 1
+fi
+
 # ----------------------------------------------------------
 # Init
 # ----------------------------------------------------------
@@ -52,7 +57,8 @@ ${github_home}/devops/scripts/exportProject.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
-  ${wmio_projectName}
+  ${wmio_projectName} \
+  ${github_home}
 
 # ----------------------------------------------------------
 # Export Workflows...
@@ -67,7 +73,8 @@ ${github_home}/devops/scripts/exportWorkflows.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
-  ${wmio_projectName}
+  ${wmio_projectName} \
+  ${github_home}
 
 # ----------------------------------------------------------
 # Export Flow Services...
@@ -83,7 +90,8 @@ ${github_home}/devops/scripts/exportFlowservices.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
-  ${wmio_projectName}
+  ${wmio_projectName} \
+  ${github_home}
 
 # ----------------------------------------------------------
 # Export Reference Data...
@@ -99,4 +107,5 @@ ${github_home}/devops/scripts/exportReferenceData.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
-  ${wmio_projectName}
+  ${wmio_projectName} \
+  ${github_home}
