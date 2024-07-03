@@ -39,9 +39,7 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
-          echo Environment1: ${{ env.environment }}
-          echo Environment2: ${{ vars.environment }}
-          echo Environment3: ${{ inputs.environment }}
+          echo Environment: ${{ inputs.environment }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
@@ -49,3 +47,36 @@ jobs:
           echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME }}:443
           echo webMethods.io Username: ${{ vars.WMIO_USERNAME }}
           echo Triggered by : ${{ github.event_name }}
+      # --------------------------------------
+      # Conditions
+      # --------------------------------------
+      - name: Collection exists
+        run: |
+          if [ ! -d "${{ env.TEST_DIR }}" ]; then
+            echo No test cases found for ${{ vars.WMIO_PROJECT_NAME }} ... exiting.
+            gh run cancel ${{ github.run_id }}
+            gh run watch ${{ github.run_id }}
+          else
+            echo Test collection found for ${{ vars.WMIO_PROJECT_NAME }} ...
+          fi
+      # ------------------------------------------------------
+      # Run Bruno Tests 
+      # ------------------------------------------------------
+      - name: Install Bruno CLI
+        run: |
+          cd ${{ env.TEST_DIR }}
+          npm install @usebruno/cli -g
+          npm install xml2js
+      - name: Run Bruno Tests
+        run: |
+          cd ${{ env.TEST_DIR }}
+
+          # ----------------------------
+          #  Run collection
+          # ----------------------------
+          bru run --env ${{ env.WMIO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.TEST_DIR }}/bruno-junit.xml
+      - name: Publish Test Reports
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: '${{ env.TEST_DIR }}/bruno-junit.xml'
