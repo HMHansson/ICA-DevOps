@@ -22,10 +22,10 @@ on:
       WMIO_PROJECT_NAME: 
         type: string
         required: true
-      WMIO_HOSTNAME_DEV: 
+      WMIO_HOSTNAME: 
         type: string
         required: true
-      WMIO_USERNAME_DEV: 
+      WMIO_USERNAME: 
         type: string
         required: true
       BRUNO_ENVIRONMENT: 
@@ -57,8 +57,8 @@ jobs:
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
           echo Github path: ${{ github.workspace }} 
-          echo webMethods.io DEV URL: https://${{ vars.WMIO_HOSTNAME_DEV }}:443
-          echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME_DEV }}
+          echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME }}:443
+          echo webMethods.io Username: ${{ vars.WMIO_USERNAME }}
           echo Triggered by : ${{ github.event_name }}
           echo pwd
           echo ls -ltr
@@ -69,9 +69,9 @@ jobs:
         run: |
           echo Triggered by event: ${{ github.event_name }}
           if test -d "${{ env.BRUNO_COLLECTION }}"; then
-            echo Test collection found for ${WMIO_PROJECT_NAME} ...
+            echo Test collection found for ${{ vars.WMIO_PROJECT_NAME }} ...
           else
-            echo No test cases found for ${WMIO_PROJECT_NAME} ...
+            echo No test cases found for ${{ vars.WMIO_PROJECT_NAME }} ...
             gh run cancel ${{ github.run_id }}
             gh run watch ${{ github.run_id }}
           fi
@@ -98,42 +98,12 @@ jobs:
           npm install xml2js
       - name: Run Bruno Tests
         run: |
-          # Handle incoming credentials from other workflows
-          if [ "${{ secrets.B2B_PASSWORD }}" != "" ]; then
-            B2B_PASSWORD=${{ secrets.B2B_PASSWORD }}
-          fi
-          if [ "${{ secrets.WMIO_PASSWORD }}" != "" ]; then
-            WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }}
-          fi
-
-          if [ "${{ env.BRUNO_ENVIRONMENT }}" == "development" ]; then
-            if [ -z ${B2B_PASSWORD+x} ]; then 
-              echo Using DEV credentials
-              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_DEV }}
-              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_DEV }}
-            fi
-          elif [ "${{ env.BRUNO_ENVIRONMENT }}" == "test" ]; then
-            echo Tests Triggered for Test...
-            if [ -z ${B2B_PASSWORD+x} ]; then 
-              echo Using TEST credentials
-              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_TEST }}
-              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_TEST }}
-            fi
-          elif [ "${{ env.BRUNO_ENVIRONMENT }}" == "production" ]; then
-            echo Tests Triggered for Production...
-            if [ -z ${B2B_PASSWORD+x} ]; then 
-              echo Using PROD credentials
-              B2B_PASSWORD=${{ secrets.B2B_PASSWORD_PROD }}
-              WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD_PROD }}
-            fi
-          fi
-          
           cd ${{ env.BRUNO_COLLECTION }}
 
           # ----------------------------
           #  Run collection
           # ----------------------------
-          bru run --env ${{ env.BRUNO_ENVIRONMENT }} --env-var B2B_PASSWORD=${B2B_PASSWORD} --env-var WMIO_PASSWORD=${WMIO_PASSWORD} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
+          bru run --env ${{ env.BRUNO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
       - name: Publish Test Reports
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
