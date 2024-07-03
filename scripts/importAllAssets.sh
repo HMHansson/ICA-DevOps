@@ -33,11 +33,11 @@ fi
 # ----------------------------------------------------------
 # Import Workflows...
 # ----------------------------------------------------------
-WORKFLOW_DIR="${github_home}/workflows"
+WORKFLOW_DIR="${github_home}/assets/workflows"
 
 if [ -d "${WORKFLOW_DIR}" ]; then
   cd "${WORKFLOW_DIR}"
-  ${github_home}/scripts/wmio/importWorkflows.sh \
+  ${github_home}/devops/scripts/importWorkflows.sh \
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
@@ -49,11 +49,11 @@ fi
 # ----------------------------------------------------------
 # Import Flow Services...
 # ----------------------------------------------------------
-FLOWSVCS_DIR="${github_home}/flowservices"
+FLOWSVCS_DIR="${github_home}/assets/flowservices"
 if [ -d "${FLOWSVCS_DIR}" ]; then
   cd "${FLOWSVCS_DIR}"
 
-  ${github_home}/scripts/wmio/importFlowservices.sh \
+  ${github_home}/devops/scripts/importFlowservices.sh \
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \
@@ -65,11 +65,11 @@ fi
 # ----------------------------------------------------------
 # Import Reference Data...
 # ----------------------------------------------------------
-REFDATA_DIR="${github_home}/referenceData"
+REFDATA_DIR="${github_home}/assets/referenceData"
 if [ -d "${REFDATA_DIR}" ]; then
   cd "${REFDATA_DIR}"
 
-  ${github_home}/scripts/wmio/importReferenceData.sh \
+  ${github_home}/devops/scripts/importReferenceData.sh \
     ${wmio_endpoint} \
     ${wmio_user} \
     ${wmio_password} \

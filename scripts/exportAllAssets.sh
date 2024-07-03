@@ -33,13 +33,13 @@ fi
 # ----------------------------------------------------------
 # Export Workflows...
 # ----------------------------------------------------------
-WORKFLOW_DIR="${github_home}/workflows"
+WORKFLOW_DIR="${github_home}/assets/workflows"
 if [ ! -d "${WORKFLOW_DIR}" ]; then
   echo Creating workflows directory "${WORKFLOW_DIR}"...
   mkdir "${WORKFLOW_DIR}"
 fi
 cd "${WORKFLOW_DIR}"
-${github_home}/scripts/wmio/exportWorkflows.sh \
+${github_home}/devops/scripts/exportWorkflows.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
@@ -48,14 +48,14 @@ ${github_home}/scripts/wmio/exportWorkflows.sh \
 # ----------------------------------------------------------
 # Export Flow Services...
 # ----------------------------------------------------------
-FLOWSVCS_DIR="${github_home}/flowservices"
+FLOWSVCS_DIR="${github_home}/assets/flowservices"
 if [ ! -d "${FLOWSVCS_DIR}" ]; then
   echo Creating flow services directory "${FLOWSVCS_DIR}"...
   mkdir "${FLOWSVCS_DIR}"
 fi
 cd "${FLOWSVCS_DIR}"
 
-${github_home}/scripts/wmio/exportFlowservices.sh \
+${github_home}/devops/scripts/exportFlowservices.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
@@ -64,14 +64,14 @@ ${github_home}/scripts/wmio/exportFlowservices.sh \
 # ----------------------------------------------------------
 # Export Reference Data...
 # ----------------------------------------------------------
-REFDATA_DIR="${github_home}/referenceData"
+REFDATA_DIR="${github_home}/assets/referenceData"
 if [ ! -d "${REFDATA_DIR}" ]; then
   echo Creating reference data directory "${REFDATA_DIR}"...
   mkdir "${REFDATA_DIR}"
 fi
 cd "${REFDATA_DIR}"
 
-${github_home}/scripts/wmio/exportReferenceData.sh \
+${github_home}/devops/scripts/exportReferenceData.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
   ${wmio_password} \
