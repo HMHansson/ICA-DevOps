@@ -17,6 +17,11 @@ on:
       environment: 
         type: string
         required: false
+    secrets:
+      B2B_PASSWORD:
+        required: true
+      WMIO_PASSWORD:
+        required: true      
 
 env:
   TEST_DIR: "${{ github.workspace }}/test/TestCollection"
