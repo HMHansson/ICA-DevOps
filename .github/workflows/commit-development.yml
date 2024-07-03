@@ -59,7 +59,7 @@ jobs:
       - name: Export All Assets
         run:  |
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
-          WMIO_URL=https://${{ vars.WMIO_HOSTNAME }}:443
+          WMIO_URL=https://${{ vars.WMIO_HOSTNAME_DEV }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
           ${{ github.workspace }}/devops/scripts/exportAllAssets.sh \
