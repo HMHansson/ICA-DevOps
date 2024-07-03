@@ -43,9 +43,6 @@ urlDecode() {
 # ----------------------------------------------------------
 # Main
 # ----------------------------------------------------------
-PROJECT_ASSETS_DIR="${github_home}/assets"
-cd "${PROJECT_ASSETS_DIR}"
-
 # Generate filename
 project_file="$(dirname "$github_home")"  # Current path
 project_file=${project_file%%+(/)}        # Remove trailing ///

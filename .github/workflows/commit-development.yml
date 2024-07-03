@@ -6,7 +6,7 @@
 #     1) Run predefined tests for this project in wM.io DEV environment
 #        - Calls workflow postman-validation to perform tests
 #   
-#     2) If validation successful:
+#     2) Only if validation successful:
 #        - Check out development branch 
 #        - Run an export of all dev assets for this project in wM.io
 #        - Perform a commit/push to git origin for this development branch
@@ -64,15 +64,15 @@ jobs:
           echo webMethods.io DEV Username: ${{ vars.WMIO_USERNAME }}
           echo Triggered by : ${{ github.event_name }}
       # --------------------------------------
-      # Export All Project Assets
+      # Export All Assets
       # --------------------------------------
-      - name: Export Project Assets
+      - name: Export All Assets
         run:  |
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
           WMIO_URL=https://${{ vars.WMIO_HOSTNAME }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
-          ${{ github.workspace }}/devops/scripts/exportProject.sh \
+          ${{ github.workspace }}/devops/scripts/exportAllAssets.sh \
             ${WMIO_URL} \
             ${{ vars.WMIO_USERNAME }} \
             "${{ secrets.WMIO_PASSWORD }}" \
@@ -83,8 +83,8 @@ jobs:
       # --------------------------------------
       - name: List Exported Assets
         run:  |
-          PROJECT_ASSETS_DIR="${{ github.workspace }}/assets"
-          ls -ltr "${PROJECT_ASSETS_DIR}"
+          ASSETS_DIR="${{ github.workspace }}/assets"
+          ls -ltr "${ASSETS_DIR}"
       # -------------------------------
       # Commmit all updated assets to Dev Branch
       # -------------------------------

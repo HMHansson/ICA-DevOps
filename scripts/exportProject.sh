@@ -38,13 +38,6 @@ fi
 # ----------------------------------------------------------
 # Main
 # ----------------------------------------------------------
-PROJECT_ASSETS_DIR="${github_home}/assets"
-if [ ! -d "${PROJECT_ASSETS_DIR}" ]; then
-  echo Creating assets directory "${PROJECT_ASSETS_DIR}"...
-  mkdir "${PROJECT_ASSETS_DIR}"
-fi
-cd "${PROJECT_ASSETS_DIR}"
-
 PROJECT_URL=${wmio_endpoint}/apis/v1/rest/projects/${wmio_projectName}/export
 
 wmioRequest=$(curl  --location --request POST ${PROJECT_URL} \

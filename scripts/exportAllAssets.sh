@@ -31,14 +31,38 @@ if [ -z "$wmio_projectName" ]; then
 fi
 
 # ----------------------------------------------------------
+# Init
+# ----------------------------------------------------------
+ASSETS_DIR="${github_home}/assets"
+if [ ! -d "${ASSETS_DIR}" ]; then
+  echo Creating assets directory "${ASSETS_DIR}"...
+  mkdir "${ASSETS_DIR}"
+fi
+
+# ----------------------------------------------------------
+# Export Project...
+# ----------------------------------------------------------
+ASSET_DIR="${github_home}/assets/project"
+if [ ! -d "${ASSET_DIR}" ]; then
+  echo Creating project directory "${ASSET_DIR}"...
+  mkdir "${ASSET_DIR}"
+fi
+cd "${ASSET_DIR}"
+${github_home}/devops/scripts/exportProject.sh \
+  ${wmio_endpoint} \
+  ${wmio_user} \
+  ${wmio_password} \
+  ${wmio_projectName}
+
+# ----------------------------------------------------------
 # Export Workflows...
 # ----------------------------------------------------------
-WORKFLOW_DIR="${github_home}/assets/workflows"
-if [ ! -d "${WORKFLOW_DIR}" ]; then
-  echo Creating workflows directory "${WORKFLOW_DIR}"...
-  mkdir "${WORKFLOW_DIR}"
+ASSET_DIR="${github_home}/assets/workflows"
+if [ ! -d "${ASSET_DIR}" ]; then
+  echo Creating workflows directory "${ASSET_DIR}"...
+  mkdir "${ASSET_DIR}"
 fi
-cd "${WORKFLOW_DIR}"
+cd "${ASSET_DIR}"
 ${github_home}/devops/scripts/exportWorkflows.sh \
   ${wmio_endpoint} \
   ${wmio_user} \
@@ -48,12 +72,12 @@ ${github_home}/devops/scripts/exportWorkflows.sh \
 # ----------------------------------------------------------
 # Export Flow Services...
 # ----------------------------------------------------------
-FLOWSVCS_DIR="${github_home}/assets/flowservices"
-if [ ! -d "${FLOWSVCS_DIR}" ]; then
-  echo Creating flow services directory "${FLOWSVCS_DIR}"...
-  mkdir "${FLOWSVCS_DIR}"
+ASSET_DIR="${github_home}/assets/flow_services"
+if [ ! -d "${ASSET_DIR}" ]; then
+  echo Creating flow services directory "${ASSET_DIR}"...
+  mkdir "${ASSET_DIR}"
 fi
-cd "${FLOWSVCS_DIR}"
+cd "${ASSET_DIR}"
 
 ${github_home}/devops/scripts/exportFlowservices.sh \
   ${wmio_endpoint} \
@@ -64,12 +88,12 @@ ${github_home}/devops/scripts/exportFlowservices.sh \
 # ----------------------------------------------------------
 # Export Reference Data...
 # ----------------------------------------------------------
-REFDATA_DIR="${github_home}/assets/referenceData"
-if [ ! -d "${REFDATA_DIR}" ]; then
-  echo Creating reference data directory "${REFDATA_DIR}"...
-  mkdir "${REFDATA_DIR}"
+ASSET_DIR="${github_home}/assets/reference_data"
+if [ ! -d "${ASSET_DIR}" ]; then
+  echo Creating reference data directory "${ASSET_DIR}"...
+  mkdir "${ASSET_DIR}"
 fi
-cd "${REFDATA_DIR}"
+cd "${ASSET_DIR}"
 
 ${github_home}/devops/scripts/exportReferenceData.sh \
   ${wmio_endpoint} \

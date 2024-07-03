@@ -18,21 +18,21 @@ on:
       WMIO_PROJECT_NAME: 
         type: string
         required: true
+      WMIO_ENVIRONMENT:
+          type: string
+          required: true
       WMIO_HOSTNAME:
         type: string
         required: true
       WMIO_USERNAME:
         type: string
         required: true
-      WMIO_ENVIRONMENT:
-          type: string
-          required: true
   
 jobs:
   # -------------------------------
-  # Import test assets to wM.io
+  # Import assets to wM.io
   # -------------------------------
-  Promote-Test-Assets:
+  Promote-Assets:
     runs-on: ubuntu-latest
     steps:
       # --------------------------------------
