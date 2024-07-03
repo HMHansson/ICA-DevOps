@@ -1,12 +1,12 @@
 # ------------------------------------------------------------------------------
-# Github Workflow to validate functionality using Postman Collections
+# Github Workflow to validate functionality using Bruno Collections
 #
-#  - This pipeline is triggered by
-#     a) Manually start this workflow (from Github actions)
-#     b) commit/push bron test cases to development branch (using git client)
-#     c) development commit/merge (called via workflow_call - commit-development)
-#     d) test PR/merge (called via workflow_call - promote-test)
-#     e) production PR/merge (called via workflow_call - promote-production)
+#  - This pipeline is triggered by project specific actions:
+#     a) Manually started from explicit workflow (from Github actions) - Development env
+#     b) commit/push bruno test cases to development branch (using git client) - Development env
+#     c) development commit/merge (called via workflow_call - commit-development) - Development env
+#     d) test PR/merge (called via workflow_call - promote-test) - Test env
+#     e) production PR/merge (called via workflow_call - promote-production) - Production env
 #
 # ------------------------------------------------------------------------------
 name: Dev Test Case Validation
