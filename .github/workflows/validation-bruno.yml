@@ -53,6 +53,7 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
+          echo Environment: ${{ vars.WMIO_ENVIRONMENT }}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
@@ -60,8 +61,6 @@ jobs:
           echo webMethods.io URL: https://${{ vars.WMIO_HOSTNAME }}:443
           echo webMethods.io Username: ${{ vars.WMIO_USERNAME }}
           echo Triggered by : ${{ github.event_name }}
-          echo pwd
-          echo ls -ltr
       # --------------------------------------
       # Conditions
       # --------------------------------------

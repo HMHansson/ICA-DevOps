@@ -18,7 +18,11 @@ on:
     secrets:
       WMIO_PASSWORD:
         required: true
-
+    inputs:
+      WMIO_ENVIRONMENT: 
+        type: string
+        required: false
+    
 jobs:
   # -------------------------------
   # Export and Commit if test success
@@ -46,6 +50,8 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
+          echo Environment1: ${{ vars.WMIO_ENVIRONMENT }}
+          echo Environment2: ${WMIO_ENVIRONMENT}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 

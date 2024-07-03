@@ -55,6 +55,8 @@ jobs:
         run: |
           echo Repository: ${{ github.repository }}
           echo Project Name: ${{ vars.WMIO_PROJECT_NAME }}
+          echo Environment1: ${{ vars.WMIO_ENVIRONMENT }}
+          echo Environment2: ${WMIO_ENVIRONMENT}
           echo Run ID: ${{ github.run_id }}
           echo Run Number: ${{ github.run_number }} 
           echo Triggered by: ${{ github.triggering_actor }} 
@@ -66,11 +68,12 @@ jobs:
       # --------------------------------------
       - name: Import Assets
         run:  |
+
           PROJECT_NAME_URL_ENCODED=$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${{ vars.WMIO_PROJECT_NAME }}")
           WMIO_URL=https://${{ vars.WMIO_HOSTNAME }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
-          ${{ github.workspace }}/devops/scripts/importProject.sh \
+          ${{ github.workspace }}/devops/scripts/importAllAssets.sh \
             ${WMIO_URL} \
             ${{ vars.WMIO_USERNAME }} \
             "${{ secrets.WMIO_PASSWORD }}" \
