@@ -19,22 +19,12 @@ on:
       WMIO_PASSWORD:
         required: true
     inputs:
-      WMIO_PROJECT_NAME: 
-        type: string
-        required: true
-      WMIO_HOSTNAME: 
-        type: string
-        required: true
-      WMIO_USERNAME: 
-        type: string
-        required: true
       WMIO_ENVIRONMENT: 
         type: string
         required: false
 
 env:
-  BRUNO_COLLECTION: "${{ github.workspace }}/test/TestCollection"
-  WMIO_ENVIRONMENT: "development"  # Default environment
+  TEST_DIR: "${{ github.workspace }}/test/TestCollection"
 
 jobs:
   Run-Tests:
@@ -64,47 +54,33 @@ jobs:
       # --------------------------------------
       # Conditions
       # --------------------------------------
-      - name: Test conditions
+      - name: Collection exists
         run: |
-          echo Triggered by event: ${{ github.event_name }}
-          if test -d "${{ env.BRUNO_COLLECTION }}"; then
-            echo Test collection found for ${{ vars.WMIO_PROJECT_NAME }} ...
-          else
-            echo No test cases found for ${{ vars.WMIO_PROJECT_NAME }} ...
+          if [ ! -d "${{ env.TEST_DIR }}" ]; then
+            echo No test cases found for ${{ vars.WMIO_PROJECT_NAME }} ... exiting.
             gh run cancel ${{ github.run_id }}
             gh run watch ${{ github.run_id }}
+          else
+            echo Test collection found for ${{ vars.WMIO_PROJECT_NAME }} ...
           fi
-          
-          # Set environment for Bruno to use (default: development)
-          if [ "${{ github.ref }}" == "refs/heads/development" ]; then
-            echo Running Bruno Tests for the DEVELOPMENT environment.
-            echo "WMIO_ENVIRONMENT=development" >> $GITHUB_ENV
-          elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
-            echo "WMIO_ENVIRONMENT=test" >> $GITHUB_ENV
-            echo Running Bruno Tests for the TEST environment.
-          elif [ "${{ github.ref }}" == "refs/heads/production" ]; then
-            echo "WMIO_ENVIRONMENT=production" >> $GITHUB_ENV
-            echo Running Bruno Tests for the PRODUCTION environment.
-          fi
-
       # ------------------------------------------------------
       # Run Bruno Tests 
       # ------------------------------------------------------
       - name: Install Bruno CLI
         run: |
-          cd ${{ env.BRUNO_COLLECTION }}
+          cd ${{ env.TEST_DIR }}
           npm install @usebruno/cli -g
           npm install xml2js
       - name: Run Bruno Tests
         run: |
-          cd ${{ env.BRUNO_COLLECTION }}
+          cd ${{ env.TEST_DIR }}
 
           # ----------------------------
           #  Run collection
           # ----------------------------
-          bru run --env ${{ env.WMIO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
+          bru run --env ${{ env.WMIO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.TEST_DIR }}/bruno-junit.xml
       - name: Publish Test Reports
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
         with:
-          report_paths: '${{ env.BRUNO_COLLECTION }}/bruno-junit.xml'
+          report_paths: '${{ env.TEST_DIR }}/bruno-junit.xml'
