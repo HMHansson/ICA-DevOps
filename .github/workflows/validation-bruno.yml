@@ -28,13 +28,13 @@ on:
       WMIO_USERNAME: 
         type: string
         required: true
-      BRUNO_ENVIRONMENT: 
+      WMIO_ENVIRONMENT: 
         type: string
         required: false
 
 env:
   BRUNO_COLLECTION: "${{ github.workspace }}/test/TestCollection"
-  BRUNO_ENVIRONMENT: "development"  # Default environment
+  WMIO_ENVIRONMENT: "development"  # Default environment
 
 jobs:
   Run-Tests:
@@ -79,12 +79,12 @@ jobs:
           # Set environment for Bruno to use (default: development)
           if [ "${{ github.ref }}" == "refs/heads/development" ]; then
             echo Running Bruno Tests for the DEVELOPMENT environment.
-            echo "BRUNO_ENVIRONMENT=development" >> $GITHUB_ENV
+            echo "WMIO_ENVIRONMENT=development" >> $GITHUB_ENV
           elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
-            echo "BRUNO_ENVIRONMENT=test" >> $GITHUB_ENV
+            echo "WMIO_ENVIRONMENT=test" >> $GITHUB_ENV
             echo Running Bruno Tests for the TEST environment.
           elif [ "${{ github.ref }}" == "refs/heads/production" ]; then
-            echo "BRUNO_ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "WMIO_ENVIRONMENT=production" >> $GITHUB_ENV
             echo Running Bruno Tests for the PRODUCTION environment.
           fi
 
@@ -103,7 +103,7 @@ jobs:
           # ----------------------------
           #  Run collection
           # ----------------------------
-          bru run --env ${{ env.BRUNO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
+          bru run --env ${{ env.WMIO_ENVIRONMENT }} --env-var B2B_PASSWORD=${{ secrets.B2B_PASSWORD }} --env-var WMIO_PASSWORD=${{ secrets.WMIO_PASSWORD }} --bail -f junit -o ${{ env.BRUNO_COLLECTION }}/bruno-junit.xml
       - name: Publish Test Reports
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
