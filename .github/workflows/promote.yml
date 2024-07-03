@@ -77,10 +77,12 @@ jobs:
           WMIO_URL=https://${{ env.WMIO_HOSTNAME }}:443
 
           chmod +x ${{ github.workspace }}/devops/scripts/*.sh
-          ${{ github.workspace }}/devops/scripts/importAllAssets.sh \
-            ${WMIO_URL} \
-            ${{ env.WMIO_USERNAME }} \
-            "${{ secrets.WMIO_PASSWORD }}" \
-            ${PROJECT_NAME_URL_ENCODED} \
-            ${{ github.workspace }}
+          echo "Promoting to ${{ env.WMIO_ENVIRONMENT }} ......."
+          
+          # ${{ github.workspace }}/devops/scripts/importAllAssets.sh \
+          #  ${WMIO_URL} \
+          #  ${{ env.WMIO_USERNAME }} \
+          #  "${{ secrets.WMIO_PASSWORD }}" \
+          #  ${PROJECT_NAME_URL_ENCODED} \
+          #  ${{ github.workspace }}
 
