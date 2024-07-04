@@ -9,8 +9,8 @@
 #     e) production PR/merge (called via workflow_call - promote-production) - Production env
 #
 # ------------------------------------------------------------------------------
-name: Dev Test Case Validation
-run-name: Project Test Cases
+name: Test Case Validation
+run-name: Run Project Test Cases
 on:
   workflow_call:
     inputs:
@@ -27,7 +27,7 @@ env:
   TEST_DIR: "${{ github.workspace }}/test/TestCollection"
 
 jobs:
-  Run-Tests:
+  Bruno-Tests:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:

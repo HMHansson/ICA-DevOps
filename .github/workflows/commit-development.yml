@@ -27,7 +27,7 @@ jobs:
   # -------------------------------
   # Export and Commit if test success
   # -------------------------------
-  Commit-Development-Assets:
+  Dev-Assets:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:

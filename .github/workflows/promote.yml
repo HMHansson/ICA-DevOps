@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Github Workflow to promote to target environment 
+# Github Workflow to promote to target environment (Test/Prod)
 #
 #   - This pipeline is triggered by a github Pull Request/merge 
 #
@@ -7,8 +7,8 @@
 #   2) Run an import of all test assets for this project into wM.io target environment
 #
 # ------------------------------------------------------------------------------
-name: Deploy
-run-name: Promote to Environment
+name: Promote
+run-name: Import to Target Environment
 on:
   workflow_call:
     inputs:
@@ -23,16 +23,14 @@ jobs:
   # -------------------------------
   # Import assets to wM.io
   # -------------------------------
-  Promote-Assets:
+  Import:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
       # --------------------------------------
-      # Check out project assets test branch
+      # Check out project assets branch
       # --------------------------------------
       - uses: actions/checkout@v4
-        with:
-          ref: '${{ vars.WMIO_ENVIRONMENT }}'
       # --------------------------------------
       # Check out DevOps scripts 
       # --------------------------------------
