@@ -70,7 +70,7 @@ jobs:
       - name: Install Bruno CLI
         run: |
           cd ${{ env.TEST_DIR }}
-          npm install @usebruno/cli -g
+          npm install @usebruno/cli@1.20.0 -g
           npm install xml2js
       - name: Run Bruno Tests
         run: |
